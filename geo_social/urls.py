@@ -15,8 +15,18 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
+
+from geo_social_app.views import outbox, note_detail, person, activity_detail
 
 urlpatterns = [
+    re_path(r'^@(?P<username>\w+)/notes/(?P<id>\w+)/$', note_detail, name="note_detail"),
+    # re_path(r'^@(?P<username>\w+)/notes/$', notes, name="notes"),
+    # re_path(r'^@(?P<username>\w+)/following/$', following, name="following"),
+    # re_path(r'^@(?P<username>\w+)/followers/$', followers, name="followers"),
+    # re_path(r'^@(?P<username>\w+)/inbox/$', inbox, name="inbox"),
+    re_path(r'^@(?P<username>\w+)/outbox/(?P<id>\w+)/$', activity_detail, name="activity_detail"),
+    re_path(r'^@(?P<username>\w+)/outbox/$', outbox, name="outbox"),
+    re_path(r'^@(?P<username>[^/]+)/$', person, name="person"),
     path('admin/', admin.site.urls),
 ]

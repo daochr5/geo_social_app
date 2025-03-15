@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-@avra=@rp7o$9f@wk$px-_b-c5u*r($j=9a#3kf_--g2eksu!y
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+DOMAIN = 'localhost:8000'
 
 # Application definition
 
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'geo_social_app'
 ]
 
 MIDDLEWARE = [
