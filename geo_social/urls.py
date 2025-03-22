@@ -17,10 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, re_path
 
-from geo_social_app.views import outbox, note_detail, person, activity_detail
+from geo_social_app.views import outbox, note_detail, person, activity_detail, place_detail
 
 urlpatterns = [
     re_path(r'^@(?P<username>\w+)/notes/(?P<id>\w+)/$', note_detail, name="note_detail"),
+    re_path(r'^@(?P<username>\w+)/places/(?P<id>\w+)/$', place_detail, name="place_detail"), #is this correct?
     # re_path(r'^@(?P<username>\w+)/notes/$', notes, name="notes"),
     # re_path(r'^@(?P<username>\w+)/following/$', following, name="following"),
     # re_path(r'^@(?P<username>\w+)/followers/$', followers, name="followers"),

@@ -1,0 +1,14 @@
+# Ignore CockroachDB data files
+cockroach-data/
+node1/
+
+# Ignore compiled Python files
+**/__pycache__/
+*.pyc
+
+# Ignore temporary files and locks
+*.lock
+temp-dirs-record.txt
+
+# Ignore environment-specific config files
+.env

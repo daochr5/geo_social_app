@@ -1,7 +1,6 @@
 import json 
 
-from django.db.models import Model, ForeignKey, CharField, TextField, ManyToManyField, CASCADE, BinaryField, DateField
-from django.dispatch import receiver
+from django.db.models import Model, ForeignKey, CharField, TextField, ManyToManyField, CASCADE, BinaryField, DateField, DecimalField
 
 from django.conf import settings
 from django.urls import reverse
@@ -20,7 +19,7 @@ class URIs(object):
 
 class Person(Model):
     username  = CharField(max_length=100)
-    name      = CharField(max_length=100)
+    name      = CharField(max_length=100, null=True)
     following = ManyToManyField('self', symmetrical=False, related_name='followers')
 
     @property
@@ -43,7 +42,7 @@ class Person(Model):
 
 class Note(Model):
     ap_id   = TextField(null=True)
-    person  = ForeignKey(Person, related_name='notes', on_delete=CASCADE)
+    person  = ForeignKey(Person, related_name='notes', on_delete=CASCADE, db_constraint=True)
     content = CharField(max_length=500)
 
     @property
@@ -59,13 +58,35 @@ class Note(Model):
             "content": self.content,
             "actor": uri_id,
         }
+
+class Place(Model):
+    ap_id   = TextField(null=True)
+    person  = ForeignKey(Person, related_name='places', on_delete=CASCADE, db_constraint=True)
+    name = CharField(max_length=100, null=True)
+    longitude = DecimalField(max_digits=9, decimal_places=6, null=True) 
+    latitude = DecimalField(max_digits=9, decimal_places=6, null=True)
+
+    @property
+    def uris(self):
+        ap_id = uri("place_detail", self.person.username, self.id)
+        return URIs(id=ap_id)
+
+    def to_activitystream(self):
+        uri_id = self.person.uris.id
+        return {
+            "type": "Place",
+            "id": self.uris.id,
+            "name": self.name,
+            "longitude": self.longitude,
+            "latitude": self.latitude,
+        }
     
 
 class Activity(Model):
     ap_id      = TextField()
     payload    = BinaryField()
     created_at = DateField(auto_now_add=True)
-    person     = ForeignKey(Person, related_name='activities', on_delete=CASCADE)
+    person     = ForeignKey(Person, related_name='activities', on_delete=CASCADE, db_constraint=True)
 
     @property
     def uris(self):

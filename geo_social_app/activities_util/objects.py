@@ -60,6 +60,11 @@ class Note(Object):
     attributes = Object.attributes + ["content", "actor"]
     type = "Note"
 
+class Place(Object):
+
+    attributes = Object.attributes + ["longitude", "latitude", "actor"]
+    type = "Place"
+
 class Actor(Object):
 
     attributes = Object.attributes + [
@@ -152,6 +157,7 @@ ALLOWED_TYPES = {
     "Actor": Actor,
     "Person": Person,
     "Note": Note,
+    "Place": Place,
     "Collection": Collection,
     "OrderedCollection": OrderedCollection
 }

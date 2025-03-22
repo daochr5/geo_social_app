@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
     'geo_social_app'
 ]
 
@@ -74,13 +79,43 @@ WSGI_APPLICATION = 'geo_social.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+DB_USER = os.getenv('DB_USER')
+DB_PASSWORD = os.getenv('DB_PASSWORD')
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+        'ENGINE': 'django_cockroachdb',
+        'NAME': 'geo_social_app_db',
+        'USER': DB_USER,
+        # 'PASSWORD': DB_PASSWORD,
+        'HOST': 'localhost',  # Primary (write) database
+        'PORT': '26257',
+    },
+    'us_west_db': {
+        'ENGINE': 'django_cockroachdb',
+        'NAME': 'geo_social_app_db',
+        'USER': DB_USER,
+        # 'PASSWORD': DB_PASSWORD,
+        'HOST': 'localhost',  # Replica (read) database in us-west
+        'PORT': '26258',
+    },
+    'us_east_db': {
+        'ENGINE': 'django_cockroachdb',
+        'NAME': 'geo_social_app_db',
+        'USER': DB_USER,
+        # 'PASSWORD': DB_PASSWORD,
+        'HOST': 'localhost',  # Replica (read) database in us-east
+        'PORT': '26259',
+    },
+    'eu_central_db': {
+        'ENGINE': 'django_cockroachdb',
+        'NAME': 'geo_social_app_db',
+        'USER': DB_USER,
+        # 'PASSWORD': DB_PASSWORD,
+        'HOST': 'localhost',  # Replica (read) database in eu-central
+        'PORT': '26260',
+    },
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -122,3 +157,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+GDAL_LIBRARY_PATH = '/opt/homebrew/Cellar/gdal/3.10.2_3/lib/libgdal.dylib'
+GEOS_LIBRARY_PATH = '/opt/homebrew/Cellar/geos//3.13.1/lib/libgeos_c.dylib'
