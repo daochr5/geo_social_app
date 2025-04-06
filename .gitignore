@@ -1,6 +1,6 @@
 # Ignore CockroachDB data files
 cockroach-data/
-node1/
+node_data/
 
 # Ignore compiled Python files
 **/__pycache__/

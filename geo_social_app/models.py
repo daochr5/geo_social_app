@@ -29,7 +29,7 @@ class Person(Model):
             # following=uri("following", self.username),
             # followers=uri("followers", self.username),
             outbox=uri("outbox", self.username),
-            # inbox=uri("inbox", self.username),
+            inbox=uri("inbox", self.username),
         )
 
     def to_activitystream(self):

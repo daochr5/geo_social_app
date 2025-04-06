@@ -3,9 +3,23 @@ import json
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt 
+from confluent_kafka import Producer
+from kafka import KafkaProducer
+from kafka_consumer import KAFKA_BROKER, KAFKA_TOPIC
 
 from geo_social_app.models import Person, Note, Activity, Place
 from geo_social_app import activities_util
+
+producer = KafkaProducer(
+    bootstrap_servers=[KAFKA_BROKER],
+    value_serializer=lambda v: json.dumps(v).encode('utf-8'),
+    linger_ms=50,
+    batch_size=32768,
+    compression_type='gzip',
+    retries=5,
+    acks='all',
+    # enable_idempotence=True
+)
 
 @csrf_exempt
 def outbox(request, username):
@@ -20,25 +34,13 @@ def outbox(request, username):
     payload = request.body.decode("utf-8")
     activity = json.loads(payload)
 
-    # Create activity in user outbox, need to handle saving to audience inbox
-    activity_object = activity['object']
-    if activity['type'] == "Create":
-        content_type = activity_object['type']
-        if content_type == 'Note':
-            content = activity['object']['content']
-            note = Note(content=content, person=person)
-            note.save()
-            activity['object']['id'] = note.uris.id 
-        elif content_type == 'Place':
-            place = Place(name=activity_object['name'], longitude=activity_object['longitude'], latitude=activity_object['latitude'], person=person)
-            place.save()
-            activity['object']['id'] = place.uris.id
+    try:
+        message = {'activity': activity, 'username': username}
+        producer.send(KAFKA_TOPIC, message)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
-        new_activity_id = activity['object']['id']
-        payload = bytes(json.dumps(activity), "utf-8")
-        activity = Activity(payload=payload, person=person)
-        activity.save()
-        return HttpResponseRedirect(new_activity_id)
+    return JsonResponse({"status": "queued", "activity": activity}, status=202)
 
 def note_detail(request, username, id):
     note = get_object_or_404(Note, id=id)

@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from dotenv import load_dotenv
+from confluent_kafka import Producer
+
 import os
 
 load_dotenv()
@@ -87,34 +89,42 @@ DATABASES = {
         'ENGINE': 'django_cockroachdb',
         'NAME': 'geo_social_app_db',
         'USER': DB_USER,
-        # 'PASSWORD': DB_PASSWORD,
-        'HOST': 'localhost',  # Primary (write) database
+        # 'PASSWORD': DB_PASSWORD, 
+        'HOST': 'localhost',
         'PORT': '26257',
     },
-    'us_west_db': {
+    'us_read_1': {
         'ENGINE': 'django_cockroachdb',
         'NAME': 'geo_social_app_db',
         'USER': DB_USER,
         # 'PASSWORD': DB_PASSWORD,
-        'HOST': 'localhost',  # Replica (read) database in us-west
+        'HOST': 'localhost',
         'PORT': '26258',
     },
-    'us_east_db': {
+    'us_read_2': {
         'ENGINE': 'django_cockroachdb',
         'NAME': 'geo_social_app_db',
         'USER': DB_USER,
         # 'PASSWORD': DB_PASSWORD,
-        'HOST': 'localhost',  # Replica (read) database in us-east
+        'HOST': 'localhost', 
         'PORT': '26259',
     },
-    'eu_central_db': {
+    'eu_read_1': {
         'ENGINE': 'django_cockroachdb',
         'NAME': 'geo_social_app_db',
         'USER': DB_USER,
         # 'PASSWORD': DB_PASSWORD,
-        'HOST': 'localhost',  # Replica (read) database in eu-central
+        'HOST': 'localhost',
         'PORT': '26260',
     },
+    'eu_read_2': {
+        'ENGINE': 'django_cockroachdb',
+        'NAME': 'geo_social_app_db',
+        'USER': DB_USER,
+        # 'PASSWORD': DB_PASSWORD,
+        'HOST': 'localhost',
+        'PORT': '26261',
+    }
 }
 
 # Password validation
