@@ -8,14 +8,14 @@ django.setup()
 
 from geo_social_app.models import Person, Note, Place
 
-KAFKA_BROKER = "localhost:9092"
-KAFKA_TOPIC = "outbox"
+KAFKA_BROKERS = ["localhost:9092","localhost:9093", "localhost:9094"]
+KAFKA_TOPIC = "test"
 KAFKA_GROUP = "activity_group"
 
 consumer = KafkaConsumer(
     KAFKA_TOPIC,
     group_id=KAFKA_GROUP,
-    bootstrap_servers=[KAFKA_BROKER],
+    bootstrap_servers=KAFKA_BROKERS,
     auto_offset_reset="earliest"
 )
 

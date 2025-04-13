@@ -1,17 +1,16 @@
 import json
 
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt 
-from confluent_kafka import Producer
 from kafka import KafkaProducer
-from kafka_consumer import KAFKA_BROKER, KAFKA_TOPIC
+from kafka_consumer import KAFKA_BROKERS, KAFKA_TOPIC
 
 from geo_social_app.models import Person, Note, Activity, Place
 from geo_social_app import activities_util
 
 producer = KafkaProducer(
-    bootstrap_servers=[KAFKA_BROKER],
+    bootstrap_servers=KAFKA_BROKERS,
     value_serializer=lambda v: json.dumps(v).encode('utf-8'),
     linger_ms=50,
     batch_size=32768,
